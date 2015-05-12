@@ -5,7 +5,7 @@ android {
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.herokuapp.shoppingapp"
+        applicationId "com.herokuapp.loginandregister"
         minSdkVersion 17
         targetSdkVersion 21
         versionCode 1
@@ -20,7 +20,6 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:21.0.3'
-    compile files('libs/gson-2.3.1.jar')
 }
