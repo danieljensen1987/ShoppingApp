@@ -1,10 +1,11 @@
 package com.herokuapp.loginandregister;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ShoppingList {
+public class ShoppingList{
     String author;
     String listName;
     List<String> subscribers;
@@ -30,8 +31,13 @@ public class ShoppingList {
         subscribers.remove(i);
     }
 
-    public void addItem (String item){
-        items.put(item,false);
+    public void addItem (String itemName, Boolean checked){
+        if(checked == null){
+            items.put(itemName,false);
+        } else {
+            items.put(itemName,checked);
+        }
+
     }
 
     public void removeItem(String item){

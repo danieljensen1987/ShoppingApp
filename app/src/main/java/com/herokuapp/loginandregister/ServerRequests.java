@@ -3,10 +3,19 @@ package com.herokuapp.loginandregister;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -16,13 +25,22 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServerRequests {
     ProgressDialog dialog;
     public static final int CONNECTION_TIMEOUT = 1000*15;
-    //public static final String SERVER_ADDRESS = "https://shoppingapi.herokuapp.com";
-    public static final String SERVER_ADDRESS = "http://192.168.1.143:3000";
+    public static final String SERVER_ADDRESS = "https://shoppingapi.herokuapp.com";
+    //public static final String SERVER_ADDRESS = "http://192.168.1.143:3000";
 
     public ServerRequests(Context context){
         dialog = new ProgressDialog(context);
@@ -38,7 +56,12 @@ public class ServerRequests {
 
     public void login(Credentials user, GetUserCallback callback){
         dialog.show();
-        new Login(user, callback ).execute();
+        new LoginAsync(user, callback ).execute();
+    }
+
+    public void findLists(String uid, ListCallback callback){
+        dialog.show();
+        new FindListsAsync(uid, callback).execute();
     }
 
     public class CreateUserAsync extends AsyncTask<String, Void, String>{
@@ -92,11 +115,11 @@ public class ServerRequests {
         }
     }
 
-    public class Login extends AsyncTask<String, Void, String> {
+    public class LoginAsync extends AsyncTask<String, Void, String> {
         Credentials creds;
         GetUserCallback userCallback;
 
-        public Login(Credentials creds, GetUserCallback callback) {
+        public LoginAsync(Credentials creds, GetUserCallback callback) {
             this.creds = creds;
             this.userCallback = callback;
         }
@@ -138,6 +161,72 @@ public class ServerRequests {
             dialog.dismiss();
             userCallback.done(uid);
             super.onPostExecute(uid);
+        }
+    }
+
+    public class FindListsAsync extends AsyncTask<String, Void, List<ShoppingList>>{
+        String uid;
+        ListCallback callback;
+
+        public FindListsAsync(String uid, ListCallback callback) {
+            this.uid = uid;
+            this.callback = callback;
+        }
+
+        @Override
+        protected List<ShoppingList> doInBackground(String... params) {
+            List<ShoppingList> lists = new ArrayList<>();
+            HttpParams httpRequestParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+            HttpConnectionParams.setSoTimeout(httpRequestParams, CONNECTION_TIMEOUT);
+
+            HttpClient client = new DefaultHttpClient(httpRequestParams);
+            HttpGet get = new HttpGet(SERVER_ADDRESS + "/findLists/" + uid);
+
+            try {
+                HttpResponse response = client.execute(get);
+                String str = EntityUtils.toString(response.getEntity());
+
+                JsonParser parser = new JsonParser();
+                JsonArray jasonArray = parser.parse(str).getAsJsonArray();
+                JSONArray arr = new JSONArray(str);
+
+                for (int i = 0; i < arr.length(); i++){
+
+                    JSONObject obj = (JSONObject) arr.get(i);
+                    String author = obj.getString("author");
+                    String listName = obj.getString("listName");
+                    ShoppingList l = new ShoppingList(author, listName);
+
+                    String subs = obj.getString("subscribers");
+                    JSONArray subArr = new JSONArray(subs);
+                    for (int j = 0; j < subArr.length(); j++){
+                        l.addSubscriber(subArr.get(j).toString());
+                    }
+
+                    String itemString = obj.getString("items");
+                    JSONArray itemArr = new JSONArray(itemString);
+                    for (int k = 0; k < itemArr.length(); k++){
+                        JSONObject ito = itemArr.getJSONObject(k);
+                        String itemName = ito.getString("itemName");
+                        Boolean checked = ito.getBoolean("checked");
+                        l.addItem(itemName, checked);
+                    }
+                   lists.add(l);
+                }
+            } catch (Exception e) {
+                Log.e("LIST()" , e.getMessage());
+                Log.e("LIST()" , e.toString());
+                e.printStackTrace();
+            }
+            return lists;
+        }
+
+        @Override
+        protected void onPostExecute(List<ShoppingList> lists) {
+            dialog.dismiss();
+            callback.done(lists);
+            super.onPostExecute(lists);
         }
     }
 }
