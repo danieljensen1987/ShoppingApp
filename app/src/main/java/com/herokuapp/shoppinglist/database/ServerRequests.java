@@ -1,16 +1,16 @@
-package com.herokuapp.loginandregister;
+package com.herokuapp.shoppinglist.database;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
+//import com.google.gson.JsonArray;
+//import com.google.gson.JsonParser;
+import com.herokuapp.shoppinglist.interfaces.GetUserCallback;
+import com.herokuapp.shoppinglist.interfaces.ListCallback;
+import com.herokuapp.shoppinglist.models.Credentials;
+import com.herokuapp.shoppinglist.models.ShoppingList;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -26,13 +26,8 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,8 +80,8 @@ public class ServerRequests {
 
             JSONObject obj = new JSONObject();
             try {
-                obj.put("email", user.email);
-                obj.put("password", user.password);
+                obj.put("email", user.getEmail());
+                obj.put("password", user.getPassword());
 
                 StringEntity se = new StringEntity(obj.toString());
                 se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
@@ -136,8 +131,8 @@ public class ServerRequests {
 
             JSONObject obj = new JSONObject();
             try {
-                obj.put("email", creds.email);
-                obj.put("password", creds.password);
+                obj.put("email", creds.getEmail());
+                obj.put("password", creds.getPassword());
 
                 StringEntity se = new StringEntity(obj.toString());
                 se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
@@ -187,8 +182,8 @@ public class ServerRequests {
                 HttpResponse response = client.execute(get);
                 String str = EntityUtils.toString(response.getEntity());
 
-                JsonParser parser = new JsonParser();
-                JsonArray jasonArray = parser.parse(str).getAsJsonArray();
+//                JsonParser parser = new JsonParser();
+//                JsonArray jasonArray = parser.parse(str).getAsJsonArray();
                 JSONArray arr = new JSONArray(str);
 
                 for (int i = 0; i < arr.length(); i++){

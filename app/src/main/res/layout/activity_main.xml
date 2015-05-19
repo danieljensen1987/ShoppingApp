@@ -1,23 +1,38 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<com.herokuapp.shoppinglist.fragments.FragmentNavigationDrawer
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10dp">
+    android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/et_email"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"/>
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical">
 
+        <!-- The ActionBar -->
+        <include
+            layout="@layout/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-    <Button
-        android:id="@+id/btn_logout"
-        android:text="Logout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
+        <!-- The main content view -->
+        <FrameLayout
+            android:id="@+id/flContent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
+    <!-- The navigation drawer -->
+    <ListView
+        android:id="@+id/lvDrawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:paddingTop="24dp"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"
+        android:background="@android:color/background_light" />
 
-</LinearLayout>
+</com.herokuapp.shoppinglist.fragments.FragmentNavigationDrawer>

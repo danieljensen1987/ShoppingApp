@@ -1,4 +1,4 @@
-package com.herokuapp.loginandregister;
+package com.herokuapp.shoppinglist;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

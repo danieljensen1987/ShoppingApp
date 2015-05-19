@@ -1,4 +1,4 @@
-package com.herokuapp.loginandregister;
+package com.herokuapp.shoppinglist.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;

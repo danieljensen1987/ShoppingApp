@@ -1,15 +1,14 @@
-package com.herokuapp.loginandregister;
+package com.herokuapp.shoppinglist.models;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class ShoppingList{
-    String author;
-    String listName;
-    List<String> subscribers;
-    HashMap<String,Boolean> items;
+public class ShoppingList {
+    public String author;
+    public String listName;
+    public List<String> subscribers;
+    public HashMap<String,Boolean> items;
 
     public ShoppingList(String author, String listName){
         this.author = author;
